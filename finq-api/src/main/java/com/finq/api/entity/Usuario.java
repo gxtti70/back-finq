@@ -9,7 +9,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "usuario")
 public class Usuario {
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -25,4 +24,9 @@ public class Usuario {
 
     @Column(name = "fecha_creacion", insertable = false, updatable = false)
     private LocalDateTime fechaCreacion;
+    
+    @PrePersist
+    protected void onCreate() {
+        fechaCreacion = LocalDateTime.now();
+    }
 }

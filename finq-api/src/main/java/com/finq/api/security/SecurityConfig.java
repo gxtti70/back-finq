@@ -38,6 +38,10 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 // Permitimos peticiones OPTIONS para que el navegador no bloquee el "pre-flight"
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                
+                // 🟢 AQUÍ ES DONDE VA: Permitir que Spring Boot muestre sus errores internos
+                .requestMatchers("/error").permitAll() 
+                
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -55,7 +59,7 @@ public class SecurityConfig {
         // 🟢 Métodos permitidos
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         
-        // 🟢 Cabeceras permitidas (listarlas explícitamente es más seguro para navegadores modernos)
+        // 🟢 Cabeceras permitidas
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept"));
         
         // 🟢 Permitimos que viajen las credenciales/tokens

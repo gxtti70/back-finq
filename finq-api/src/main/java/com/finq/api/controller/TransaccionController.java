@@ -1,6 +1,7 @@
 package com.finq.api.controller;
 
 import com.finq.api.entity.Transaccion;
+import com.finq.api.repository.CuentaRepository;
 import com.finq.api.repository.TransaccionRepository;
 import com.finq.api.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,11 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/transacciones")
-@CrossOrigin(origins = "*")
 public class TransaccionController {
 
     @Autowired
@@ -21,19 +19,41 @@ public class TransaccionController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    // 🟢 NUEVO: Traemos el repo de las cuentas
+    @Autowired
+    private CuentaRepository cuentaRepository;
+
     @GetMapping
-    public ResponseEntity<List<Transaccion>> obtenerMisDatos() {
+    public ResponseEntity<?> obtenerTodas() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return ResponseEntity.ok(transaccionRepository.findByUsuarioEmail(email));
     }
 
     @PostMapping
-    public ResponseEntity<?> guardarDato(@RequestBody Transaccion objeto) {
+    public ResponseEntity<?> guardar(@RequestBody Transaccion transaccion) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        
         var usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         
-        objeto.setUsuario(usuario);
-        return ResponseEntity.ok(transaccionRepository.save(objeto));
+        // 🟢 MAGIA AQUÍ: Buscamos las tarjetas del parcero logueado
+        var cuentas = cuentaRepository.findByUsuarioEmail(email);
+        
+        if (cuentas.isEmpty()) {
+            return ResponseEntity.badRequest().body("No tienes tarjetas creadas. Crea una primero.");
+        }
+
+        // 🟢 Le asignamos la transacción a la PRIMERA tarjeta que encuentre (ej. Nequi)
+        transaccion.setCuenta(cuentas.get(0));
+        
+        // Y se la asignamos al usuario también
+        transaccion.setUsuario(usuario);
+        
+        // 🚨 IMPORTANTE: Como borramos la BD, temporalmente quitamos la categoría obligatoria 
+        // para que no estalle, mientras creamos el CRUD de categorías.
+        //transaccion.setCategoria(null); 
+        
+        return ResponseEntity.ok(transaccionRepository.save(transaccion));
     }
+    
 }

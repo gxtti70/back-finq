@@ -1,38 +1,40 @@
 package com.finq.api.controller;
 
-import com.finq.api.entity.Suscripcion;
-import com.finq.api.repository.SuscripcionRepository;
+import com.finq.api.entity.Cuenta;
+import com.finq.api.repository.CuentaRepository;
 import com.finq.api.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/suscripciones")
-public class SuscripcionController {
+@RequestMapping("/api/cuentas")
+public class CuentaController {
 
     @Autowired
-    private SuscripcionRepository suscripcionRepository;
+    private CuentaRepository cuentaRepository;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    // 🟢 Método para que Angular pida la lista de tarjetas
     @GetMapping
-    public ResponseEntity<List<Suscripcion>> obtenerMisDatos() {
+    public ResponseEntity<?> obtenerMisCuentas() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok(suscripcionRepository.findByUsuarioEmail(email));
+        return ResponseEntity.ok(cuentaRepository.findByUsuarioEmail(email));
     }
 
+    // 🟢 Método para crear una tarjeta nueva
     @PostMapping
-    public ResponseEntity<?> guardarDato(@RequestBody Suscripcion objeto) {
+    public ResponseEntity<?> crearCuenta(@RequestBody Cuenta cuenta) {
+        // Buscamos quién es el dueño según el Token
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         var usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        objeto.setUsuario(usuario);
-        return ResponseEntity.ok(suscripcionRepository.save(objeto));
+
+        // Le asignamos el dueño a la cuenta y guardamos
+        cuenta.setUsuario(usuario);
+        return ResponseEntity.ok(cuentaRepository.save(cuenta));
     }
 }

@@ -34,4 +34,14 @@ public class AuthController {
             return ResponseEntity.badRequest().body(new AuthResponse(null, e.getMessage()));
         }
     }
+
+    @PutMapping("/password")
+    public ResponseEntity<?> cambiarPassword(@RequestBody com.finq.api.dto.CambiarPasswordDTO request) {
+        try {
+            String mensaje = authService.cambiarPassword(request);
+            return ResponseEntity.ok(new AuthResponse(null, mensaje));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new AuthResponse(null, e.getMessage()));
+        }
+    }
 }

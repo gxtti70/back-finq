@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/suscripciones")
-@CrossOrigin(origins = "*", allowedHeaders = "*") // 🚀 Eliminamos el bloqueo de CORS para este controlador
+@CrossOrigin(origins = "*", allowedHeaders = "*") 
 public class SuscripcionController {
 
     @Autowired

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/cuentas")
+@CrossOrigin(origins = "*", allowedHeaders = "*") // 🚀 Eliminamos el bloqueo de CORS para este controlador
 public class CuentaController {
 
     @Autowired

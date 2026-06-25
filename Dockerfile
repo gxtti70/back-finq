@@ -2,7 +2,8 @@
 FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
 COPY . .
-RUN ./mvnw clean package -DskipTests
+# Cambiamos ./mvnw por mvn tradicional
+RUN mvn clean package -DskipTests
 
 # Paso 2: Crear la imagen ligera para correr la aplicación usando Temurin 17
 FROM eclipse-temurin:17-jre-alpine

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/transacciones")
+@CrossOrigin(origins = "*", allowedHeaders = "*") 
 public class TransaccionController {
 
     @Autowired
@@ -19,7 +20,7 @@ public class TransaccionController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    // 🟢 NUEVO: Traemos el repo de las cuentas
+    //Traemos el repo de las cuentas
     @Autowired
     private CuentaRepository cuentaRepository;
 
@@ -36,20 +37,20 @@ public class TransaccionController {
         var usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         
-        // 🟢 MAGIA AQUÍ: Buscamos las tarjetas del parcero logueado
+        //Buscamos las tarjetas del parcero logueado
         var cuentas = cuentaRepository.findByUsuarioEmail(email);
         
         if (cuentas.isEmpty()) {
             return ResponseEntity.badRequest().body("No tienes tarjetas creadas. Crea una primero.");
         }
 
-        // 🟢 Le asignamos la transacción a la PRIMERA tarjeta que encuentre (ej. Nequi)
+        // Le asignamos la transacción a la PRIMERA tarjeta que encuentre
         transaccion.setCuenta(cuentas.get(0));
         
         // Y se la asignamos al usuario también
         transaccion.setUsuario(usuario);
         
-        // 🚨 IMPORTANTE: Como borramos la BD, temporalmente quitamos la categoría obligatoria 
+        //temporalmente quitamos la categoría obligatoria 
         // para que no estalle, mientras creamos el CRUD de categorías.
         //transaccion.setCategoria(null); 
         

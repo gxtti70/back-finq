@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/cuentas")
-@CrossOrigin(origins = "*", allowedHeaders = "*") // 🚀 Eliminamos el bloqueo de CORS para este controlador
+@CrossOrigin(origins = "*", allowedHeaders = "*") 
 public class CuentaController {
 
     @Autowired
@@ -19,14 +19,13 @@ public class CuentaController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    // 🟢 Método para que Angular pida la lista de tarjetas
     @GetMapping
     public ResponseEntity<?> obtenerMisCuentas() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return ResponseEntity.ok(cuentaRepository.findByUsuarioEmail(email));
     }
 
-    // 🟢 Método para crear una tarjeta nueva
+    // Método para crear una tarjeta nueva
     @PostMapping
     public ResponseEntity<?> crearCuenta(@RequestBody Cuenta cuenta) {
         // Buscamos quién es el dueño según el Token

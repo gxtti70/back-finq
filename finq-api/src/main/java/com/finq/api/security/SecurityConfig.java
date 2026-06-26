@@ -39,7 +39,7 @@ public class SecurityConfig {
                 // Permitimos peticiones OPTIONS para que el navegador no bloquee el "pre-flight"
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                 
-                // 🟢 AQUÍ ES DONDE VA: Permitir que Spring Boot muestre sus errores internos
+                // Permitir que Spring Boot muestre sus errores internos
                 .requestMatchers("/error").permitAll() 
                 
                 .anyRequest().authenticated()
@@ -53,16 +53,19 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // 🟢 Especificamos el origen para evitar conflictos con allowCredentials
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
         
-        // 🟢 Métodos permitidos
+        configuration.setAllowedOrigins(List.of(
+            "http://localhost:4200",
+            "https://front-finq.vercel.app"
+        ));
+        
+        // Métodos permitidos
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         
-        // 🟢 Cabeceras permitidas
+        // Cabeceras permitidas
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept"));
         
-        // 🟢 Permitimos que viajen las credenciales/tokens
+        // Permitimos que viajen las credenciales/tokens
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

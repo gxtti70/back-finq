@@ -50,11 +50,11 @@ public class SecurityConfig {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        
-        configuration.setAllowedOrigins(List.of(
+        // 🛠️ CAMBIO AQUÍ: Usamos setAllowedOriginPatterns en lugar de setAllowedOrigins
+        configuration.setAllowedOriginPatterns(List.of(
             "http://localhost:4200",
             "https://front-finq.vercel.app"
         ));
